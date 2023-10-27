@@ -13,7 +13,7 @@ export class UsuarioController {
     @Body('senha') senha: string,
   ) {
     const usuario = await this.usuarioService.create({
-      ...createUsuarioDto, 
+      ...createUsuarioDto,
       senha
     });
 

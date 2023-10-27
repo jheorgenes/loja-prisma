@@ -1,6 +1,5 @@
 import { Injectable } from "@nestjs/common";
 import { PrismaService } from "src/prisma/prisma.service";
-import { CreateUsuarioDto } from "./dto/create-usuario.dto";
 import { UsuarioEntity } from "./entities/usuario.entity";
 
 @Injectable()
@@ -8,20 +7,20 @@ export class UsuarioRepository {
 
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(createUsuarioDto: CreateUsuarioDto): Promise<UsuarioEntity> {
-    return this.prisma.usuario.create({ data: createUsuarioDto });
+  async create(usuario: UsuarioEntity): Promise<UsuarioEntity> {
+    return this.prisma.usuario.create({ data: usuario });
   }
 
   async findAll(): Promise<UsuarioEntity[]> {
     return this.prisma.usuario.findMany();
   }
 
-  async existsWithEmail(email: string): Promise<boolean> {
-    const possivelUsuario = await this.prisma.usuario.findMany({
-      where: { email }
+  async existsWithEmail(email: string) {
+    return await this.prisma.usuario.findMany({
+      where: {
+        email
+      }
     });
-
-    return possivelUsuario !== undefined;
   }
 
   async findById(id: string) {

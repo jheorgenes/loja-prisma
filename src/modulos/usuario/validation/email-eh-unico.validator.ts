@@ -9,15 +9,16 @@ export class EmailEhUnicoValidador implements ValidatorConstraintInterface {
   constructor(private usuarioService: UsuarioService) {}
 
   async validate(value: any): Promise<boolean> {
-    try {
-      // Se retornar false, significa que já tem usuário com e-mail cadastrado
-      const usuarioComEmailExiste = await this.usuarioService.findUsuarioByEmail(value);
 
-      // Se retornar false aqui, significa que passou na validação
-      return !usuarioComEmailExiste;
+    try {
+      const resultado = await this.usuarioService.findUsuarioByEmail(value);
+      // Retorna false se houver algum registro (ocasionando o travamento)
+      return !resultado;
     } catch (error) {
-      if(error instanceof NotFoundException) {
-        return true;
+
+      // Se NotFountException for lançada, significa que não há usuário com esse e-mail cadastrado e permite passar na validação
+      if(error instanceof NotFoundException){
+        return true
       }
 
       throw error;

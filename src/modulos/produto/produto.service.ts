@@ -1,11 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { CreateProdutoDto } from './dto/create-produto.dto';
 import { UpdateProdutoDto } from './dto/update-produto.dto';
+import { ProdutoRepository } from './produto.repository';
+import { ProdutoEntity } from './entities/produto.entity';
 
 @Injectable()
 export class ProdutoService {
-  create(createProdutoDto: CreateProdutoDto) {
-    return 'This action adds a new produto';
+
+  constructor(private readonly produtoRepository: ProdutoRepository) {}
+
+  async create(produto: CreateProdutoDto) {
+
+    // await this.produtoRepository.create(produto);
   }
 
   findAll() {

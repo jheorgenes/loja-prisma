@@ -15,7 +15,7 @@ export class UsuarioService {
 
     Object.assign(usuarioEntity, usuario as UsuarioEntity);
 
-    return await this.usuarioRepository.create(usuario);
+    return await this.usuarioRepository.create(usuarioEntity);
   }
 
   async findAll() {
@@ -29,13 +29,14 @@ export class UsuarioService {
   }
 
   async findUsuarioByEmail(email: string) {
-    const checkEmail = await this.usuarioRepository.existsWithEmail(email);
 
-    if(checkEmail === null) {
-      throw new NotFoundException('O email não foi encontrado.');
+    const result = await this.usuarioRepository.existsWithEmail(email);
+
+    if(!result || result === undefined || result.length === 0) {
+      throw new NotFoundException('Não existe usuário com esse email');
     }
 
-    return checkEmail;
+    return result;
   }
 
   async update(id: string, updateUsuarioDto: UpdateUsuarioDto) {
