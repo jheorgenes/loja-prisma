@@ -1,0 +1,93 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Usuario {
+  id        String    @id @default(uuid())
+  nome      String    @db.VarChar(100)
+  email     String    @db.VarChar(70)
+  senha     String    @db.VarChar(255)
+  pedidos   Pedido[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt()
+  deletedAt DateTime? @db.Timestamp()
+
+  @@map("usuarios")
+}
+
+model Produto {
+  id                   String                   @id @default(uuid())
+  nome                 String                   @db.VarChar(100)
+  valor                Decimal                  @db.Decimal(9, 2)
+  quantidadeDisponivel Decimal                  @db.Decimal(9, 0)
+  descricao            String                   @db.VarChar(255)
+  categoria            String                   @db.VarChar(100)
+  createdAt            DateTime                 @default(now())
+  updatedAt            DateTime?                @updatedAt()
+  deletedAt            DateTime?                @db.Timestamp()
+  caracteristicas      ProdutoCaracteristicas[]
+  imagens              ProdutoImagens[]
+  itensPedido          ItemPedido[]
+
+  @@map("produtos")
+}
+
+model ProdutoCaracteristicas {
+  id        String  @id @default(uuid())
+  nome      String  @db.VarChar(100)
+  descricao String  @db.VarChar(100)
+  produtoId String  @map("produtoId")
+  produto   Produto @relation(fields: [produtoId], references: [id])
+
+  @@map("produto_caracteristicas")
+}
+
+model ProdutoImagens {
+  id        String  @id @default(uuid())
+  url       String  @db.VarChar(255)
+  descricao String  @db.VarChar(100)
+  produtoId String  @map("produtoId")
+  produto   Produto @relation(fields: [produtoId], references: [id])
+
+  @@map("produto_imagens")
+}
+
+enum StatusPedido {
+  EM_PROCESSAMENTO @map("em_processamento")
+  PROCESSADO       @map("processado")
+  CANCELADO        @map("cancelado")
+}
+
+model Pedido {
+  id          String       @id @default(uuid())
+  valorTotal  Decimal      @db.Decimal(9, 2)
+  status      StatusPedido
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime?    @updatedAt()
+  deletedAt   DateTime?    @db.Timestamp()
+  usuarioId   String       @map("pedidoId")
+  usuario     Usuario      @relation(fields: [usuarioId], references: [id])
+  itensPedido ItemPedido[]
+
+  @@map("pedidos")
+}
+
+model ItemPedido {
+  id         String  @id @default(uuid())
+  quantidade Decimal @db.Decimal(9, 0)
+  precoVenda Decimal @db.Decimal(9, 2)
+  pedidoId   String  @map("pedidoId")
+  produtoId  String  @map("produtoId")
+  pedido     Pedido  @relation(fields: [pedidoId], references: [id])
+  produto    Produto @relation(fields: [produtoId], references: [id])
+
+  @@map("itens_pedido")
+}

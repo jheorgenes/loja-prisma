@@ -1,0 +1,8 @@
+-- AlterTable
+ALTER TABLE "pedidos" ALTER COLUMN "deletedAt" SET DATA TYPE TIMESTAMP;
+
+-- AlterTable
+ALTER TABLE "produtos" ALTER COLUMN "deletedAt" SET DATA TYPE TIMESTAMP;
+
+-- AlterTable
+ALTER TABLE "usuarios" ALTER COLUMN "deletedAt" SET DATA TYPE TIMESTAMP;
