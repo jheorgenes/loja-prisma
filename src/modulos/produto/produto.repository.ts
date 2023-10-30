@@ -1,39 +1,53 @@
 import { Injectable } from "@nestjs/common";
 import { PrismaService } from "src/prisma/prisma.service";
-import { CaracteristicaProdutoDto, CreateProdutoDto } from "./dto/create-produto.dto";
+import { ProdutoCaracteristicaEntity } from "./entities/produto-caracteristica.entity";
+import { ProdutoImagemEntity } from "./entities/produto-imagem.entity";
 import { ProdutoEntity } from "./entities/produto.entity";
+import { UpdateProdutoDto } from "./dto/update-produto.dto";
 
 @Injectable()
 export class ProdutoRepository {
 
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(produto: CreateProdutoDto): Promise<ProdutoEntity> {
+  async create(
+    produto: ProdutoEntity,
+    caracteristicas: ProdutoCaracteristicaEntity[],
+    imagens: ProdutoImagemEntity[]
+  ): Promise<ProdutoEntity> {
     return this.prisma.produto.create({
       data: {
-        nome: produto.nome,
-        valor: produto.valor,
-        quantidadeDisponivel: produto.quantidadeDisponivel,
-        descricao: produto.descricao,
-        categoria: produto.categoria,
+        ...produto,
         caracteristicas: {
-          connectOrCreate: caracteristicas.map((caracteristica) => {
-            return {
-              create: { data: produto.caracteristicas }
-             }
-          })
+          create: caracteristicas
+        },
+        imagens: {
+          create: imagens
         }
+      },
+      include: {
+        caracteristicas: true,
+        imagens: true
       }
     });
   }
 
-  async findAll(): Promise<ProdutoEntity[]> {
-    return this.prisma.produto.findMany();
+  async findAll() {
+    return this.prisma.produto.findMany({
+      include: {
+        caracteristicas: true,
+        imagens: true
+      }
+    });
   }
 
-  async findById(id: string): Promise<ProdutoEntity> {
+  async findById(id: string) {
     const produto = await this.prisma.produto.findUnique({
-      where: { id }
+      where: { id },
+      include: {
+        caracteristicas: true,
+        imagens: true
+      }
     });
 
     if(!produto) {
@@ -43,20 +57,92 @@ export class ProdutoRepository {
     return produto;
   }
 
-  async update(id: string, updateData: Partial<ProdutoEntity>): Promise<ProdutoEntity> {
-    await this.findById(id);
+  async update(
+    id: string,
+    updateData: UpdateProdutoDto,
+    caracteristicasDto?: ProdutoCaracteristicaEntity[],
+    imagensDto?: ProdutoImagemEntity[]
+  ): Promise<ProdutoEntity> {
+    const produtoBd = await this.findById(id);
+    const { caracteristicas, imagens } = produtoBd;
 
-    return this.prisma.produto.update({
+    if(caracteristicasDto !== null && caracteristicasDto !== undefined) {
+      caracteristicas.forEach(
+        async caracteristica => {
+          await this.prisma.produtoCaracteristicas.delete({
+            where: {
+              id: caracteristica.id
+            }
+          })
+        }
+      )
+    }
+
+    if(imagensDto !== null && imagensDto !== undefined) {
+      imagens.forEach(async imagem => {
+        await this.prisma.produtoImagens.delete({
+          where: {
+            id: imagem.id
+          }
+        })
+      })
+    }
+
+
+    return await this.prisma.produto.update({
       where: { id },
-      data: updateData
+      data: {
+        ...updateData,
+        caracteristicas: {
+          create: caracteristicasDto
+        },
+        imagens: {
+          create: imagensDto
+        }
+      },
+      include: {
+        caracteristicas: true,
+        imagens: true
+      }
     });
+    // return await this.prisma.produto.update({
+    //   where: { id: id },
+    //   data: {
+    //     ...updateData,
+    //     caracteristicas: {
+    //       // Atualiza ou cria novas caracteristicas
+    //       upsert: caracteristicasDto.map((caracteristica) => ({
+    //         where: { id: caracteristica.id },
+    //         update: caracteristica,
+    //         create: caracteristica
+    //       }))
+    //     },
+    //     imagens: {
+    //       upsert: imagensDto.map((imagem) => ({
+    //         where: { id: imagem.id },
+    //         update: imagem,
+    //         create: imagem
+    //       }))
+    //     }
+    //   }
+    // });
   }
 
   async remove(id: string) {
-    await this.findById(id);
+    const produto = await this.findById(id);
 
-    return await this.prisma.usuario.delete({
-      where: { id }
+    //Excluindo caracteristicas relacionadas
+    await this.prisma.produtoCaracteristicas.deleteMany({
+      where: { produtoId: produto.id }
+    })
+
+    //Excluindo imagens relacionadas
+    await this.prisma.produtoImagens.deleteMany({
+      where: { produtoId: produto.id }
+    })
+
+    return this.prisma.produto.delete({
+      where: { id },
     });
   }
 }

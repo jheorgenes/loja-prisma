@@ -45,7 +45,7 @@ model ProdutoCaracteristicas {
   nome      String  @db.VarChar(100)
   descricao String  @db.VarChar(100)
   produtoId String  @map("produtoId")
-  produto   Produto @relation(fields: [produtoId], references: [id])
+  produto   Produto @relation(fields: [produtoId], references: [id], onUpdate: Cascade, onDelete: Cascade)
 
   @@map("produto_caracteristicas")
 }
@@ -55,7 +55,7 @@ model ProdutoImagens {
   url       String  @db.VarChar(255)
   descricao String  @db.VarChar(100)
   produtoId String  @map("produtoId")
-  produto   Produto @relation(fields: [produtoId], references: [id])
+  produto   Produto @relation(fields: [produtoId], references: [id], onUpdate: Cascade, onDelete: Cascade)
 
   @@map("produto_imagens")
 }
