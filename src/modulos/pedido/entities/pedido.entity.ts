@@ -1,5 +1,6 @@
 import { $Enums, Pedido } from "@prisma/client";
 import { Decimal } from "@prisma/client/runtime/library";
+import { ItemPedidoEntity } from "./itempedido.entity";
 
 export class PedidoEntity implements Pedido {
   id: string;
@@ -9,4 +10,5 @@ export class PedidoEntity implements Pedido {
   updatedAt: Date;
   deletedAt: Date;
   usuarioId: string;
+  itensPedido: ItemPedidoEntity[];
 }

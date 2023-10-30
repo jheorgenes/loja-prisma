@@ -40,7 +40,10 @@ export class UsuarioRepository {
 
     return this.prisma.usuario.update({
       where: { id },
-      data: updateData
+      data: {
+        ...updateData,
+        updatedAt: new Date()
+      }
     })
 
     // Object

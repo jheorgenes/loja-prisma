@@ -93,6 +93,7 @@ export class ProdutoRepository {
       where: { id },
       data: {
         ...updateData,
+        updatedAt: new Date(),
         caracteristicas: {
           create: caracteristicasDto
         },
@@ -142,7 +143,7 @@ export class ProdutoRepository {
     })
 
     return this.prisma.produto.delete({
-      where: { id },
+      where: { id }
     });
   }
 }

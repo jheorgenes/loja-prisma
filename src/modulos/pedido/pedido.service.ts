@@ -4,23 +4,26 @@ import { UpdatePedidoDto } from './dto/update-pedido.dto';
 
 @Injectable()
 export class PedidoService {
+
+  // constructor(private pedidoRepository) {}
+
   create(createPedidoDto: CreatePedidoDto) {
-    return 'This action adds a new pedido';
+    // const usuario = await this.prisma.
   }
 
   findAll() {
     return `This action returns all pedido`;
   }
 
-  findOne(id: number) {
+  findOne(id: string) {
     return `This action returns a #${id} pedido`;
   }
 
-  update(id: number, updatePedidoDto: UpdatePedidoDto) {
+  update(id: string, updatePedidoDto: UpdatePedidoDto) {
     return `This action updates a #${id} pedido`;
   }
 
-  remove(id: number) {
+  remove(id: string) {
     return `This action removes a #${id} pedido`;
   }
 }
