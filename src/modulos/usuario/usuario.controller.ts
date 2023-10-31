@@ -2,6 +2,9 @@ import { Body, Controller, Delete, Get, Param, Patch, Post, Put } from '@nestjs/
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
 import { UpdateUsuarioDto } from './dto/update-usuario.dto';
 import { UsuarioService } from './usuario.service';
+import { HashearSenhaPipe } from 'src/recursos/pipes/hashear-senha.pipe';
+import { ListUsuarioDto } from './dto/list-usuario.dto';
+import { UsuarioEntity } from './entities/usuario.entity';
 
 @Controller('usuarios')
 export class UsuarioController {
@@ -9,16 +12,17 @@ export class UsuarioController {
 
   @Post()
   async create(
-    @Body() createUsuarioDto: CreateUsuarioDto,
-    @Body('senha') senha: string,
+    @Body() { senha, ...createUsuarioDto }: CreateUsuarioDto,
+    @Body('senha', HashearSenhaPipe) senhaHasheada: string,
   ) {
+
     const usuario = await this.usuarioService.create({
       ...createUsuarioDto,
-      senha
+      senha: senhaHasheada
     });
 
     return {
-      usuario,
+      usuario: new ListUsuarioDto(usuario.id, usuario.nome),
       mensagem: 'Usuário criado com sucesso'
     }
   }

@@ -11,19 +11,19 @@ export class PedidoService {
     // const usuario = await this.prisma.
   }
 
-  findAll() {
-    return `This action returns all pedido`;
-  }
+  // findAll() {
+  //   return `This action returns all pedido`;
+  // }
 
-  findOne(id: string) {
-    return `This action returns a #${id} pedido`;
-  }
+  // findOne(id: string) {
+  //   return `This action returns a #${id} pedido`;
+  // }
 
-  update(id: string, updatePedidoDto: UpdatePedidoDto) {
-    return `This action updates a #${id} pedido`;
-  }
+  // update(id: string, updatePedidoDto: UpdatePedidoDto) {
+  //   return `This action updates a #${id} pedido`;
+  // }
 
-  remove(id: string) {
-    return `This action removes a #${id} pedido`;
-  }
+  // remove(id: string) {
+  //   return `This action removes a #${id} pedido`;
+  // }
 }

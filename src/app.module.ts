@@ -16,6 +16,8 @@ import { UsuarioModule } from './modulos/usuario/usuario.module';
     AutenticacaoModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [
+
+  ],
 })
 export class AppModule {}

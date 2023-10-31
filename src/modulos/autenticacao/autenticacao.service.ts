@@ -1,26 +1,38 @@
-import { Injectable } from '@nestjs/common';
-import { CreateAutenticacaoDto } from './dto/create-autenticacao.dto';
-import { UpdateAutenticacaoDto } from './dto/update-autenticacao.dto';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { UsuarioService } from '../usuario/usuario.service';
+import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcrypt';
+
+export interface UsuarioPayload {
+  sub: string,
+  nomeUsuario: string
+}
 
 @Injectable()
 export class AutenticacaoService {
-  create(createAutenticacaoDto: CreateAutenticacaoDto) {
-    return 'This action adds a new autenticacao';
-  }
 
-  findAll() {
-    return `This action returns all autenticacao`;
-  }
+  constructor(
+    private readonly usuarioService: UsuarioService,
+    private jwtService: JwtService
+  ) {}
 
-  findOne(id: number) {
-    return `This action returns a #${id} autenticacao`;
-  }
+  async login(email: string, senha: string) {
 
-  update(id: number, updateAutenticacaoDto: UpdateAutenticacaoDto) {
-    return `This action updates a #${id} autenticacao`;
-  }
+    const usuario = await this.usuarioService.findUsuarioByEmail(email);
 
-  remove(id: number) {
-    return `This action removes a #${id} autenticacao`;
+    const usuarioAutenticado = await bcrypt.compare(senha, usuario.senha);
+
+    if(!usuarioAutenticado) {
+      throw new UnauthorizedException('O email ou a senha estão incorretos');
+    }
+
+    const payload: UsuarioPayload = {
+      sub: usuario.id,
+      nomeUsuario: usuario.nome
+    }
+
+    return {
+      token_acesso: await this.jwtService.signAsync(payload)
+    }
   }
 }

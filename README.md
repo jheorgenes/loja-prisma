@@ -43,7 +43,7 @@ $ npm i @nestjs/config
 ```
 
 ```bash
-# class-validate 
+# class-validate
 $ npm i class-validator class-transformer
 ```
 
@@ -65,7 +65,7 @@ $ npm install @prisma/client
 
 ```bash
 # init prisma
-$ npx prisma init 
+$ npx prisma init
 ```
 
 ```bash
@@ -112,10 +112,37 @@ $ docker-compose up -d
 $ docker-compose down
 ```
 
+### Bcrypt
+```bash
+$ npm i bcrypt@5.1.0 -E
+$ npm i --save-dev @types/bcrypt
+```
+
+### JWT Token
+```bash
+$ npm i @nestjs/jwt@10.1.0 -E
+```
+
+### Gerando um guard
+```bash
+$ nest g guard modulos/autenticacao/autenticacao --no-spec
+```
+
+### Cache
+```bash
+# Cache-Manager
+$ npm i @nestjs/cache-manager@2.0.1 -E cache-manager@5.2.3 -E
+```
+
+```bash
+# Cache-Manager Redis
+$ npm i cache-manager-redis-yet@4.1.2 -E
+```
+
 ### JWT Authentication
 ```bash
-# 
-$ 
+#
+$
 ```
 
 ## Running the app

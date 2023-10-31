@@ -16,7 +16,7 @@ export class UsuarioRepository {
   }
 
   async existsWithEmail(email: string) {
-    return await this.prisma.usuario.findMany({
+    return await this.prisma.usuario.findFirst({
       where: {
         email
       }
