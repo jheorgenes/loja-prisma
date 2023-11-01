@@ -23,13 +23,13 @@ export class UsuarioRepository {
     });
   }
 
-  async findById(id: string) {
+  async findById(id: string): Promise<UsuarioEntity> {
     const usuario = await this.prisma.usuario.findUnique({
       where: { id }
     });
 
     if(!usuario) {
-      throw new Error('Usuário não encontrado');
+      throw new Error(`Usuário com id ${id} não encontrado`);
     }
 
     return usuario;

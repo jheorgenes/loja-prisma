@@ -1,10 +1,9 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import { HashearSenhaPipe } from 'src/recursos/pipes/hashear-senha.pipe';
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
+import { ListUsuarioDto } from './dto/list-usuario.dto';
 import { UpdateUsuarioDto } from './dto/update-usuario.dto';
 import { UsuarioService } from './usuario.service';
-import { HashearSenhaPipe } from 'src/recursos/pipes/hashear-senha.pipe';
-import { ListUsuarioDto } from './dto/list-usuario.dto';
-import { UsuarioEntity } from './entities/usuario.entity';
 
 @Controller('usuarios')
 export class UsuarioController {
@@ -30,6 +29,11 @@ export class UsuarioController {
   @Get()
   async findAll() {
     return this.usuarioService.findAll();
+  }
+
+  @Get('email/:email')
+  async findOneByEmail(@Param('email') email: string) {
+    return this.usuarioService.findUsuarioByEmail(email);
   }
 
   @Get(':id')

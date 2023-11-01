@@ -1,12 +1,20 @@
-import { Usuario } from '@prisma/client';
-import { PedidoEntity } from 'src/modulos/pedido/entities/pedido.entity';
-export class UsuarioEntity implements Usuario {
-  id: string;
+// import { Usuario } from '@prisma/client';
+import { Prisma } from '@prisma/client';
+export class UsuarioEntity implements Prisma.UsuarioUncheckedCreateInput {
+  id?: string;
   nome: string;
   email: string;
   senha: string;
-  createdAt: Date;
-  updatedAt: Date;
-  deletedAt: Date;
-  // pedidos: PedidoEntity[]
+  createdAt?: string | Date;
+  updatedAt?: string | Date;
+  deletedAt?: string | Date;
+  pedidos?: Prisma.PedidoCreateNestedManyWithoutUsuarioInput;
+
+  // id: string;
+  // nome: string;
+  // email: string;
+  // senha: string;
+  // createdAt: Date;
+  // updatedAt: Date;
+  // deletedAt: Date;
 }

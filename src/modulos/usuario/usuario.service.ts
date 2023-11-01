@@ -33,7 +33,7 @@ export class UsuarioService {
     const result = await this.usuarioRepository.existsWithEmail(email);
 
     if(!result || result === undefined) {
-      throw new NotFoundException('Não existe usuário com esse email');
+      throw new NotFoundException(`Não existe usuário com esse email ${email}`);
     }
 
     return result;
