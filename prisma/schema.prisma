@@ -2,7 +2,7 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
   previewFeatures = ["postgresqlExtensions"]
 }
 
@@ -27,9 +27,7 @@ model Usuario {
 model Produto {
   id                   String                   @id @default(uuid())
   nome                 String                   @db.VarChar(100)
-  // valor                Decimal                  @db.Decimal(9, 2)
   valor                Float                    @db.DoublePrecision()
-  // quantidadeDisponivel Decimal                  @db.Decimal(9, 0)
   quantidadeDisponivel Float                    @db.DoublePrecision()
   descricao            String                   @db.VarChar(255)
   categoria            String                   @db.VarChar(100)
@@ -88,9 +86,9 @@ model ItemPedido {
   quantidade Float   @db.DoublePrecision()
   precoVenda Float   @db.DoublePrecision()
   pedidoId   String  @map("pedidoId")
-  pedido     Pedido  @relation(fields: [pedidoId], references: [id])
+  pedido     Pedido  @relation(fields: [pedidoId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   produtoId  String  @map("produtoId")
-  produto    Produto @relation(fields: [produtoId], references: [id])
+  produto    Produto @relation(fields: [produtoId], references: [id], onUpdate: Cascade)
 
   @@map("itens_pedido")
 }

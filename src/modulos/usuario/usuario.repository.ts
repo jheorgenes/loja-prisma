@@ -8,7 +8,14 @@ export class UsuarioRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(usuario: UsuarioEntity): Promise<UsuarioEntity> {
-    return this.prisma.usuario.create({ data: usuario });
+    return this.prisma.usuario.create({
+      data: {
+        ...usuario,
+        pedidos: {
+          connect: []
+        }
+      }
+    });
   }
 
   async findAll(): Promise<UsuarioEntity[]> {
@@ -42,7 +49,10 @@ export class UsuarioRepository {
       where: { id },
       data: {
         ...updateData,
-        updatedAt: new Date()
+        updatedAt: new Date(),
+        pedidos: {
+          connect: []
+        }
       }
     })
 

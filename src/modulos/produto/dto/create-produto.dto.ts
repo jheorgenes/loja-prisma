@@ -1,6 +1,6 @@
+import { Type } from "class-transformer";
 import { ArrayMinSize, IsArray, IsNotEmpty, IsNumber, IsString, IsUrl, MaxLength, Min, ValidateNested } from "class-validator";
 import { ProdutoEntity } from "../entities/produto.entity";
-import { Type } from "class-transformer";
 
 export class CaracteristicaProdutoDto {
 
@@ -22,7 +22,7 @@ export class ImagemProdutoDto {
   id: string;
 
   @IsUrl()
-  @MaxLength(100, { message: 'Usuário não pode ter mais que 100 caracteres' })
+  @MaxLength(254, { message: 'Usuário não pode ter mais que 100 caracteres' })
   url: string;
 
   @IsString()

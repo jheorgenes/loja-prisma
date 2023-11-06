@@ -1,13 +1,13 @@
 import { Produto } from "@prisma/client";
-import { Decimal } from "@prisma/client/runtime/library";
 import { ProdutoCaracteristicaEntity } from "./produto-caracteristica.entity";
 import { ProdutoImagemEntity } from "./produto-imagem.entity";
+import { ItemPedidoEntity } from "src/modulos/pedido/entities/itempedido.entity";
 
 export class ProdutoEntity implements Produto {
   id: string;
   nome: string;
-  valor: Decimal;
-  quantidadeDisponivel: Decimal;
+  valor: number;
+  quantidadeDisponivel: number;
   descricao: string;
   categoria: string;
   createdAt: Date;
@@ -15,4 +15,5 @@ export class ProdutoEntity implements Produto {
   deletedAt: Date;
   caracteristicas?: ProdutoCaracteristicaEntity[];
   imagens?: ProdutoImagemEntity[];
+  itensPedido?: ItemPedidoEntity[];
 }

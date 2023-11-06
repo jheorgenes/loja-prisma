@@ -1,9 +1,9 @@
-import { Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable } from "@nestjs/common";
 import { PrismaService } from "src/prisma/prisma.service";
+import { UpdateProdutoDto } from "./dto/update-produto.dto";
 import { ProdutoCaracteristicaEntity } from "./entities/produto-caracteristica.entity";
 import { ProdutoImagemEntity } from "./entities/produto-imagem.entity";
 import { ProdutoEntity } from "./entities/produto.entity";
-import { UpdateProdutoDto } from "./dto/update-produto.dto";
 
 @Injectable()
 export class ProdutoRepository {
@@ -23,6 +23,9 @@ export class ProdutoRepository {
         },
         imagens: {
           create: imagens
+        },
+        itensPedido: {
+          connect: []
         }
       },
       include: {
@@ -44,6 +47,26 @@ export class ProdutoRepository {
   async findById(id: string) {
     const produto = await this.prisma.produto.findUnique({
       where: { id },
+      include: {
+        caracteristicas: true,
+        imagens: true
+      }
+    });
+
+    if(!produto) {
+      throw new Error('Não existe produto com esse id no banco de dados');
+    }
+
+    return produto;
+  }
+
+  async findManyByIds(ids: string[]) {
+    const produto = await this.prisma.produto.findMany({
+      where: {
+        id: {
+          in: ids
+        }
+      },
       include: {
         caracteristicas: true,
         imagens: true
@@ -106,27 +129,60 @@ export class ProdutoRepository {
         imagens: true
       }
     });
-    // return await this.prisma.produto.update({
-    //   where: { id: id },
-    //   data: {
-    //     ...updateData,
-    //     caracteristicas: {
-    //       // Atualiza ou cria novas caracteristicas
-    //       upsert: caracteristicasDto.map((caracteristica) => ({
-    //         where: { id: caracteristica.id },
-    //         update: caracteristica,
-    //         create: caracteristica
-    //       }))
-    //     },
-    //     imagens: {
-    //       upsert: imagensDto.map((imagem) => ({
-    //         where: { id: imagem.id },
-    //         update: imagem,
-    //         create: imagem
-    //       }))
-    //     }
-    //   }
-    // });
+  }
+
+  async atualizaQuantidadeProduto(id: string, quantidade: number) {
+    const produto = await this.findById(id);
+
+    const novoItem = new UpdateProdutoDto();
+    novoItem.nome = produto.nome;
+    novoItem.valor = produto.valor;
+    novoItem.categoria = produto.categoria;
+    novoItem.descricao = produto.descricao;
+
+    if(produto.quantidadeDisponivel < quantidade) {
+      throw new BadRequestException('Não há estoque suficiente para a compra');
+    }
+
+    novoItem.quantidadeDisponivel = produto.quantidadeDisponivel - quantidade;
+
+    const caracteristicasDto = produto.caracteristicas;
+    const imagensDto = produto.imagens;
+
+    delete novoItem.caracteristicas;
+    delete novoItem.imagens;
+
+
+    const caracteristicas = [];
+    if(caracteristicasDto) {
+      caracteristicasDto.forEach(caracteristica => {
+        let caracteristicaEntity = new ProdutoCaracteristicaEntity();
+        Object.assign(caracteristicaEntity, caracteristica);
+        caracteristicas.push(caracteristicaEntity);
+      });
+    }
+
+    const imagens = [];
+    if(imagensDto) {
+      imagensDto.forEach(imagem => {
+        let imagemEntity = new ProdutoImagemEntity();
+        Object.assign(imagemEntity, imagem);
+        imagens.push(imagemEntity);
+      })
+    }
+
+    await this.prisma.produto.update({
+      where: { id },
+      data: {
+        ...novoItem,
+        caracteristicas: {
+          connect: caracteristicasDto
+        },
+        imagens: {
+          connect: imagensDto
+        }
+      }
+    });
   }
 
   async remove(id: string) {

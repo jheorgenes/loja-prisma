@@ -2,7 +2,7 @@ import { Type } from "class-transformer";
 import { ArrayMinSize, IsArray, IsInt, IsUUID, ValidateNested } from "class-validator";
 
 class ItemPedidoDTO {
-  // @IsUUID()
+  @IsUUID()
   produtoId: string;
 
   @IsInt()
