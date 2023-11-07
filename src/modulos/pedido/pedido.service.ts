@@ -47,19 +47,22 @@ export class PedidoService {
 
     this.trataDadosDoPedido(dadosPedido, produtosRelacionados);
 
-    const itensPedidoEntidades = await Promise.all(dadosPedido.itensPedido.map(async (itemPedido) => {
-      const produtoRelacionado = produtosRelacionados.find((produto) => produto.id === itemPedido.produtoId);
+    //Aguarda todas as promessas serem executadas
+    const itensPedidoEntidades = await Promise.all(dadosPedido.itensPedido.map(
+      async (itemPedido) => {
+        const produtoRelacionado = produtosRelacionados.find((produto: ProdutoEntity) => produto.id === itemPedido.produtoId);
 
-      const itemPedidoEntity = new ItemPedidoEntity();
-      itemPedidoEntity.produtoId = produtoRelacionado!.id;
-      itemPedidoEntity.precoVenda = produtoRelacionado!.valor;
-      itemPedidoEntity.quantidade = itemPedido.quantidade;
+        const itemPedidoEntity = new ItemPedidoEntity();
+        itemPedidoEntity.produtoId = produtoRelacionado!.id;
+        itemPedidoEntity.precoVenda = produtoRelacionado!.valor;
+        itemPedidoEntity.quantidade = itemPedido.quantidade;
 
-      //Atualiza a quantidade de estoque da entidade Produto
-      await this.produtoRepository.atualizaQuantidadeProduto(produtoRelacionado.id, itemPedido.quantidade);
+        //Atualiza a quantidade de estoque da entidade Produto
+        await this.produtoRepository.atualizaQuantidadeProduto(produtoRelacionado.id, itemPedido.quantidade);
 
-      return itemPedidoEntity;
-    }));
+        return itemPedidoEntity;
+      }
+    ));
 
     const valorTotal = itensPedidoEntidades.reduce((total, item) => {
       return total + item.precoVenda * item.quantidade;

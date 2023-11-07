@@ -123,9 +123,9 @@ $ npm i --save-dev @types/bcrypt
 $ npm i @nestjs/jwt@10.1.0 -E
 ```
 
-### Gerando um guard
+### Colors para colorir terminal
 ```bash
-$ nest g guard modulos/autenticacao/autenticacao --no-spec
+$ npm install colors
 ```
 
 ### Cache
@@ -139,10 +139,14 @@ $ npm i @nestjs/cache-manager@2.0.1 -E cache-manager@5.2.3 -E
 $ npm i cache-manager-redis-yet@4.1.2 -E
 ```
 
-### JWT Authentication
+### Gerando um guard
 ```bash
-#
-$
+$ nest g guard modulos/autenticacao/autenticacao --no-spec
+```
+
+### Gerando um Interceptor
+```bash
+$ nest g itc recursos/interceptores/logger-global --no-spec
 ```
 
 ## Running the app
